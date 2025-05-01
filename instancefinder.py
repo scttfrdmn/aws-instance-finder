@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: Copyright 2025, Scott Friedman and Project Contributors
+
 import boto3
 import argparse
 from datetime import datetime
@@ -18,7 +21,7 @@ def expand_instance_type_filter(instance_types):
             expanded_types.append(inst_type)
     return expanded_types
 
-def get_instance_usage(start_month, end_month, instance_types, show_cost=False, show_usage=False):
+def get_instance_usage(start_month, end_month, instance_types, show_cost=False, show_usage=False, profile=None):
     """
     Retrieve EC2 instance usage/cost data for specified parameters
     
@@ -28,6 +31,7 @@ def get_instance_usage(start_month, end_month, instance_types, show_cost=False, 
         instance_types (list): List of instance types or patterns to analyze
         show_cost (bool): Whether to show cost data
         show_usage (bool): Whether to show usage data
+        profile (str, optional): AWS profile name to use
     """
     
     # Convert dates to first/last of month
@@ -35,7 +39,9 @@ def get_instance_usage(start_month, end_month, instance_types, show_cost=False, 
     _, last_day = calendar.monthrange(int(end_month[:4]), int(end_month[5:7]))
     end_date = f"{end_month}-{last_day}"
 
-    client = boto3.client('ce')
+    # Create boto3 client with optional profile
+    session = boto3.Session(profile_name=profile) if profile else boto3.Session()
+    client = session.client('ce')
 
     # Expand instance type patterns and create filter
     expanded_types = expand_instance_type_filter(instance_types)
@@ -117,6 +123,7 @@ def main():
     parser.add_argument('--show-cost', action='store_true', help='Show cost data')
     parser.add_argument('--show-usage', action='store_true', help='Show usage data')
     parser.add_argument('--output', help='Output file path (CSV)')
+    parser.add_argument('--profile', help='AWS profile name to use')
 
     args = parser.parse_args()
 
@@ -133,7 +140,8 @@ def main():
         args.end,
         args.instances,
         args.show_cost,
-        args.show_usage
+        args.show_usage,
+        args.profile
     )
 
     if df is not None:

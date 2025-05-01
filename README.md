@@ -1,5 +1,8 @@
 # AWS Instance Finder
 
+<!-- SPDX-License-Identifier: MIT -->
+<!-- SPDX-FileCopyrightText: Copyright 2025, Scott Friedman and Project Contributors -->
+
 A Python utility for analyzing AWS EC2 instance usage and cost across your AWS account.
 
 ## Features
@@ -44,6 +47,7 @@ python instancefinder.py --start YYYY-MM --end YYYY-MM --instances [INSTANCE_TYP
 - `--show-cost`: Include cost data in results
 - `--show-usage`: Include usage data in results
 - `--output`: Path to save results as CSV
+- `--profile`: AWS profile name to use (optional)
 
 ### Examples
 
@@ -60,6 +64,11 @@ python instancefinder.py --start 2023-01 --end 2023-12 --instances t3.micro m5.l
 Export usage data to CSV:
 ```bash
 python instancefinder.py --start 2023-01 --end 2023-12 --instances t3. m5. --show-usage --output instance_usage.csv
+```
+
+Using a specific AWS profile:
+```bash
+python instancefinder.py --start 2023-01 --end 2023-12 --instances t3. --profile production
 ```
 
 ## Permissions Required
