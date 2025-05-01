@@ -113,9 +113,16 @@ Export usage data to CSV:
 ./instancefinder --start 2023-01 --end 2023-12 --instances t3.,m5. --show-usage --output instance_usage.csv
 ```
 
-## Permissions Required
+## AWS Permissions Required
 
-Your AWS credentials need access to the Cost Explorer API. The minimum IAM permissions required are:
+> ⚠️ **IMPORTANT:** This tool requires Cost Explorer API access, which is not included in most default IAM policies.
+
+Your AWS credentials need specific permissions to access the Cost Explorer API. Without these permissions, the tool will fail with an "AccessDeniedException" error.
+
+### Required IAM Policy
+
+Create a custom IAM policy with the following permissions:
+
 ```json
 {
     "Version": "2012-10-17",
@@ -130,6 +137,24 @@ Your AWS credentials need access to the Cost Explorer API. The minimum IAM permi
     ]
 }
 ```
+
+### How to Apply the Policy
+
+1. **For IAM users or roles:**
+   - In the AWS Management Console, go to IAM
+   - Create a new policy with the JSON above
+   - Attach this policy to any IAM users/roles that will use this tool
+
+2. **For SSO users:**
+   - In AWS IAM Identity Center, create a Permission Set that includes the policy above
+   - Assign this Permission Set to users or groups who need to use this tool
+
+3. **For temporary credentials:**
+   - Ensure that the IAM role you assume has the Cost Explorer permissions attached
+
+### Cost Explorer API Activation
+
+Note that Cost Explorer must be activated in your AWS account before the API can be used. If you haven't used Cost Explorer before, visit the AWS Cost Management console first to enable it.
 
 ## Building from Source for Multiple Platforms
 
